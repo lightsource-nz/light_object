@@ -1,0 +1,28 @@
+{
+    "buildType": {
+        "default": "debug-host",
+        "choices": {
+            "debug-rp2040": {
+                "short": "Debug - RP2040",
+                "long": "Include debug information",
+                "buildType": "Debug",
+                "settings": {
+                    "PICO_PLATFORM": "rp2040"
+                }
+            },
+            "debug-host": {
+                "short": "Debug - Host",
+                "long": "Include debug information",
+                "buildType": "Debug",
+                "settings": {
+                    "PICO_PLATFORM": "host"
+                }
+            },
+            "release": {
+                "short": "Release",
+                "long": "Optimize for speed- exclude debug information",
+                "buildType": "Release"
+            }
+        }
+    }
+}
