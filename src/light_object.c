@@ -11,3 +11,8 @@
 
 #include <stdio.h>
 #include <string.h>
+
+void light_object_init(struct light_object *obj)
+{
+    obj->ref_count = 0;
+}
