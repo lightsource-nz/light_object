@@ -36,15 +36,14 @@ struct lobj_type {
 };
 
 // TODO implement saturation conditions and warnings
-static inline void light_object_get(struct light_object *obj)
-{
-        atomic_fetch_add(&obj->ref_count, 1);
-}
-static inline void light_object_put(struct light_object *obj)
-{
-        atomic_fetch_sub(&obj->ref_count, 1);
-}
+extern void light_object_get(struct light_object *obj);
+extern void light_object_put(struct light_object *obj);
 
-void light_object_init(struct light_object *obj);
+extern void light_object_init(struct light_object *obj, struct lobj_type *type);
+
+extern int light_object_set_name(struct light_object *obj, uint8_t *format, ...);
+
+extern int light_object_add(struct light_object *obj, struct light_object *parent,
+                            uint8_t *format, ...);
 
 #endif
