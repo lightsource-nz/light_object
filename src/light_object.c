@@ -19,7 +19,7 @@ void light_object_init(struct light_object *obj, struct lobj_type *type)
     obj->type = type;
 }
 // TODO implement saturation conditions and warnings
-void light_object_get(struct light_object *obj)
+struct light_object *light_object_get(struct light_object *obj)
 {
         atomic_fetch_add(&obj->ref_count, 1);
 }

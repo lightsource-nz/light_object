@@ -36,7 +36,7 @@ struct lobj_type {
 };
 
 // TODO implement saturation conditions and warnings
-extern void light_object_get(struct light_object *obj);
+extern struct light_object *light_object_get(struct light_object *obj);
 extern void light_object_put(struct light_object *obj);
 
 extern void light_object_init(struct light_object *obj, struct lobj_type *type);
