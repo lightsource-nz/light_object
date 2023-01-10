@@ -43,6 +43,11 @@ extern void light_object_init(struct light_object *obj, struct lobj_type *type);
 
 extern int light_object_set_name(struct light_object *obj, uint8_t *format, ...);
 
+static inline const uint8_t *light_object_get_name(struct light_object *obj)
+{
+        return obj->id;
+}
+
 extern int light_object_add(struct light_object *obj, struct light_object *parent,
                             uint8_t *format, ...);
 
