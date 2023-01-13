@@ -33,8 +33,10 @@ static void _registry_critical_exit(struct light_object_registry *reg)
 
 void light_object_setup()
 {
-        critical_section_init(&_registry_default.mutex);
-        _registry_loaded = true;
+        if(!_registry_loaded) {
+                _registry_loaded = true;
+                critical_section_init(&_registry_default.mutex);
+        }
 }
 static struct light_object_registry *_get_default_registry()
 {
