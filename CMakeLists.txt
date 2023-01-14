@@ -40,4 +40,5 @@ endif()
 target_link_libraries(
     light_object
     INTERFACE
+    light_util
 )

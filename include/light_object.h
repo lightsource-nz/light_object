@@ -5,6 +5,7 @@
 #include <stdint.h>
 #include <stdbool.h>
 
+#include <light_util.h>
 #include <pico/platform.h>
 
 #define LIGHT_OK                        (uint8_t) 0x0u
@@ -16,18 +17,6 @@
 // must use hard spinlocks for synchronization
 // #include <stdatomic.h>
 
-// type manipulation macros shamelessly borrowed from the Linux kernel
-#define container_of(ptr, type, member) ({                          \
-        void *__mptr = (void *)(ptr);                               \
-        static_assert(__same_type(*(ptr), ((type *)0)->member) ||   \
-                __same_type(*(ptr), void),                          \
-                "pointer type mismatch in container_of()");         \
-        ((type *)(__mptr - offsetof(type, member))); })
-
-#ifndef __same_type
-# define __same_type(a, b) __builtin_types_compatible_p(typeof(a), typeof(b))
-#endif
-
 #define LOM_OBJ_NAME_LENGTH 16
 
 struct light_object_registry;
@@ -37,6 +26,7 @@ struct light_object {
         uint32_t ref_count;
         struct light_object *parent;
         struct lobj_type *type;
+        uint16_t state_initialized: 1;
         uint16_t is_static: 1;
         uint16_t is_readonly: 1;
         uint8_t id[LOM_OBJ_NAME_LENGTH];

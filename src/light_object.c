@@ -74,7 +74,9 @@ static uint8_t light_object_set_name_va(struct light_object *obj, const uint8_t 
 }
 static int light_object_add_internal(struct light_object_registry *reg, struct light_object *obj)
 {
+        struct light_object *parent;
 
+        return LIGHT_OK;
 }
 static int light_object_add_va_reg(struct light_object_registry *reg, struct light_object *obj, struct light_object *parent,
                                uint8_t *format, va_list vargs)
@@ -110,9 +112,13 @@ void light_object_init_reg(struct light_object_registry *reg, struct light_objec
 // TODO implement saturation conditions and warnings
 struct light_object *light_object_get_reg(struct light_object_registry *reg, struct light_object *obj)
 {
-        critical_section_enter_blocking(&reg->mutex);
-        obj->ref_count++;
-        critical_section_exit(&reg->mutex);
+        if(obj) {
+                critical_section_enter_blocking(&reg->mutex);
+                obj->ref_count++;
+                critical_section_exit(&reg->mutex);
+        }
+        return obj;
+
 }
 void light_object_put_reg(struct light_object_registry *reg, struct light_object *obj)
 {
