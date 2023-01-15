@@ -8,11 +8,6 @@
 #include <light_util.h>
 #include <pico/platform.h>
 
-#define LIGHT_OK                        (uint8_t) 0x0u
-#define LIGHT_ARG_INVALID               (uint8_t) 0x1u
-#define LIGHT_NO_MEMORY                 (uint8_t) 0x2u
-#define LIGHT_NO_RESOURCE               (uint8_t) 0x3u
-
 // C11 atomics are not supported on Cortex-M0/M0+ CPU cores, so RP2 targets
 // must use hard spinlocks for synchronization
 // #include <stdatomic.h>

@@ -67,10 +67,10 @@ static uint8_t light_object_set_name_va(struct light_object *obj, const uint8_t 
 {
         if(!format || !format[0]) {
                 // TODO log empty name field error
-                return -1;
+                return LIGHT_INVALID;
         }
         vsnprintf(obj->id, LOM_OBJ_NAME_LENGTH, format, vargs);
-        return 0;
+        return LIGHT_OK;
 }
 static int light_object_add_internal(struct light_object_registry *reg, struct light_object *obj)
 {
@@ -86,7 +86,7 @@ static int light_object_add_va_reg(struct light_object_registry *reg, struct lig
         retval = light_object_set_name_va(obj, format, vargs);
 
         if(retval) {
-            // TODO log error
+            light_warn("Could not set name of object at 0x%X: %s\n", obj, light_error_to_string(retval));
             return retval;
         }
 
