@@ -6,26 +6,30 @@
 #include <stdbool.h>
 
 #include <light_util.h>
-#include <pico/platform.h>
 
 // C11 atomics are not supported on Cortex-M0/M0+ CPU cores, so RP2 targets
 // must use hard spinlocks for synchronization
-// #include <stdatomic.h>
+#ifdef PICO_RP2040
+#include <pico/platform.h>
+typedef uint32_t light_ref_t;
+#else
+#include <stdatomic.h>
+typedef atomic_char32_t light_ref_t;
+#endif
 
 #define LOM_OBJ_NAME_LENGTH 16
 
 struct light_object_registry;
 
-__packed_aligned
 struct light_object {
-        uint32_t ref_count;
+        light_ref_t ref_count;
         struct light_object *parent;
         struct lobj_type *type;
         uint16_t state_initialized: 1;
         uint16_t is_static: 1;
         uint16_t is_readonly: 1;
         uint8_t id[LOM_OBJ_NAME_LENGTH];
-};
+} __packed_aligned;
  
 struct lobj_type {
         uint8_t id[LOM_OBJ_NAME_LENGTH];

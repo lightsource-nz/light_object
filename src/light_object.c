@@ -113,9 +113,18 @@ void light_object_init_reg(struct light_object_registry *reg, struct light_objec
 struct light_object *light_object_get_reg(struct light_object_registry *reg, struct light_object *obj)
 {
         if(obj) {
+                if(obj->ref_count == 0)
+                        return NULL;
+#ifdef PICO_RP2040
                 critical_section_enter_blocking(&reg->mutex);
                 obj->ref_count++;
                 critical_section_exit(&reg->mutex);
+#else
+                uint32_t new;
+                do { new = obj->ref_count + 1; }
+                while (!atomic_compare_exchange_strong(&obj->ref_count, &new, obj->ref_count));
+                
+#endif
         }
         return obj;
 
@@ -139,3 +148,9 @@ int light_object_add_reg(struct light_object_registry *reg, struct light_object 
 
         return retval;
 }
+
+extern int light_ref_get(light_ref_t *ref)
+{
+
+}
+extern void light_ref_put(light_ref_t *ref);
