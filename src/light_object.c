@@ -116,7 +116,7 @@ extern int light_object_add(struct light_object *obj, struct light_object *paren
 
 void light_object_init_reg(struct light_object_registry *reg, struct light_object *obj, struct lobj_type *type)
 {
-    obj->ref_count = 0;
+    obj->ref_count = 1;
     obj->type = type;
 }
 // TODO implement saturation conditions and warnings
@@ -130,9 +130,9 @@ struct light_object *light_object_get_reg(struct light_object_registry *reg, str
                 obj->ref_count++;
                 critical_section_exit(&reg->mutex);
 #else
-                uint32_t new;
-                do { new = obj->ref_count + 1; }
-                while (!atomic_compare_exchange_strong(&obj->ref_count, &new, obj->ref_count));
+                uint32_t old;
+                do { old = obj->ref_count; }
+                while (!atomic_compare_exchange_strong(&obj->ref_count, &old, obj->ref_count + 1));
                 
 #endif
         }
