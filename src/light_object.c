@@ -9,13 +9,17 @@
 
 #include "light_object.h"
 
+#ifdef PICO_RP2040
 #include <pico/critical_section.h>
+#endif
 #include <stdio.h>
 #include <string.h>
 #include <stdarg.h>
 
 struct light_object_registry {
+#ifdef PICO_RP2040
         critical_section_t mutex;
+#endif
         // TODO add alloc/free function pointers
 };
 
@@ -24,18 +28,24 @@ static struct light_object_registry _registry_default;
 
 static void _registry_critical_enter(struct light_object_registry *reg)
 {
+#ifdef PICO_RP2040
         critical_section_enter_blocking(&reg->mutex);
+#endif
 }
 static void _registry_critical_exit(struct light_object_registry *reg)
 {
+#ifdef PICO_RP2040
         critical_section_exit(&reg->mutex);
+#endif
 }
 
 void light_object_setup()
 {
         if(!_registry_loaded) {
                 _registry_loaded = true;
+#ifdef RP2040
                 critical_section_init(&_registry_default.mutex);
+#endif
         }
 }
 static struct light_object_registry *_get_default_registry()
@@ -131,9 +141,13 @@ struct light_object *light_object_get_reg(struct light_object_registry *reg, str
 }
 void light_object_put_reg(struct light_object_registry *reg, struct light_object *obj)
 {
+#ifdef PICO_RP2040
         critical_section_enter_blocking(&_registry_default.mutex);
+#endif
         obj->ref_count--;
+#ifdef PICO_RP2040
         critical_section_exit(&_registry_default.mutex);
+#endif
 }
 
 int light_object_add_reg(struct light_object_registry *reg, struct light_object *obj, struct light_object *parent,
@@ -149,8 +163,11 @@ int light_object_add_reg(struct light_object_registry *reg, struct light_object 
         return retval;
 }
 
-extern int light_ref_get(light_ref_t *ref)
+int light_ref_get(light_ref_t *ref)
 {
 
 }
-extern void light_ref_put(light_ref_t *ref);
+void light_ref_put(light_ref_t *ref)
+{
+
+}
