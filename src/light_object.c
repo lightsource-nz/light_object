@@ -9,6 +9,7 @@
 
 #include "light_object.h"
 
+#include <pico/platform.h>
 #ifdef PICO_RP2040
 #include <pico/critical_section.h>
 #endif
@@ -122,31 +123,43 @@ void light_object_init_reg(struct light_object_registry *reg, struct light_objec
 // TODO implement saturation conditions and warnings
 struct light_object *light_object_get_reg(struct light_object_registry *reg, struct light_object *obj)
 {
+        struct light_object *ref = obj;
         if(obj) {
-                if(obj->ref_count == 0)
-                        return NULL;
 #ifdef PICO_RP2040
                 critical_section_enter_blocking(&reg->mutex);
-                obj->ref_count++;
+                if(obj->ref_count > 0)
+                        obj->ref_count++;
+                else
+                         ref = NULL;
                 critical_section_exit(&reg->mutex);
 #else
-                uint32_t old;
-                do { old = obj->ref_count; }
-                while (!atomic_compare_exchange_strong(&obj->ref_count, &old, obj->ref_count + 1));
+                uint32_t old = obj->ref_count;
+                do {
+                        if(old == 0 ) {
+                                ref = NULL;
+                                break;
+                        }
+                } while (!atomic_compare_exchange_strong(&obj->ref_count, &old, obj->ref_count + 1));
                 
 #endif
         }
         return obj;
-
 }
 void light_object_put_reg(struct light_object_registry *reg, struct light_object *obj)
 {
 #ifdef PICO_RP2040
         critical_section_enter_blocking(&_registry_default.mutex);
-#endif
         obj->ref_count--;
-#ifdef PICO_RP2040
         critical_section_exit(&_registry_default.mutex);
+#else
+        uint8_t status;
+        uint32_t count = obj->ref_count;
+        do {
+                if(count > 0)
+                        status = atomic_compare_exchange_strong(&obj->ref_count, &count, count + 1);
+                else
+                        return;
+        } while (status);
 #endif
 }
 

@@ -9,8 +9,8 @@
 
 // C11 atomics are not supported on Cortex-M0/M0+ CPU cores, so RP2 targets
 // must use hard spinlocks for synchronization
-#ifdef PICO_RP2040
 #include <pico/platform.h>
+#ifdef PICO_RP2040
 typedef uint32_t light_ref_t;
 #else
 #include <stdatomic.h>
