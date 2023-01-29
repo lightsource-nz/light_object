@@ -143,7 +143,7 @@ struct light_object *light_object_get_reg(struct light_object_registry *reg, str
                 
 #endif
         }
-        return obj;
+        return ref;
 }
 void light_object_put_reg(struct light_object_registry *reg, struct light_object *obj)
 {
