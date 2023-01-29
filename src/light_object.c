@@ -85,7 +85,11 @@ static uint8_t light_object_set_name_va(struct light_object *obj, const uint8_t 
 }
 static int light_object_add_internal(struct light_object_registry *reg, struct light_object *obj)
 {
-        struct light_object *parent;
+        struct light_object *parent = light_object_get(obj->parent);
+
+        if(parent->type->evt_child_add)
+                parent->type->evt_child_add(parent, obj);
+        obj->type->evt_add(obj, parent);
 
         return LIGHT_OK;
 }
@@ -113,7 +117,17 @@ extern int light_object_add(struct light_object *obj, struct light_object *paren
         return light_object_add_va_reg(_get_default_registry(), obj, parent, format, vargs);
         va_end(vargs);
 }
-
+int light_object_del(struct light_object *obj)
+{
+        light_object_del_reg(&_registry_default, obj);
+}
+int light_object_del_reg(struct light_object_registry *reg, struct light_object *obj)
+{
+        light_object_put_reg(reg, obj->parent);
+        if(obj->parent->type->evt_child_remove)
+                obj->parent->type->evt_child_remove(obj->parent, obj);
+        obj->parent = NULL;
+}
 
 void light_object_init_reg(struct light_object_registry *reg, struct light_object *obj, struct lobj_type *type)
 {

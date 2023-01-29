@@ -34,6 +34,9 @@ struct light_object {
 struct lobj_type {
         uint8_t id[LOM_OBJ_NAME_LENGTH];
         void (*release)(struct light_object*);
+        void (*evt_add)(struct light_object *obj, struct light_object *parent);
+        void (*evt_child_add)(struct light_object *obj, struct light_object *child);
+        void (*evt_child_remove)(struct light_object *obj, struct light_object *child);
 };
 
 // initialize default object registry, must be called before any light_object API functions
@@ -53,13 +56,15 @@ static inline const uint8_t *light_object_get_name(struct light_object *obj)
 
 extern int light_object_add(struct light_object *obj, struct light_object *parent,
                             uint8_t *format, ...);
+extern int light_object_add_reg(struct light_object_registry *reg, struct light_object *obj, struct light_object *parent,
+                            uint8_t *format, ...);
+extern int light_object_del(struct light_object *obj);
+extern int light_object_del_reg(struct light_object_registry *reg, struct light_object *obj);
 
 extern struct light_object *light_object_get_reg(struct light_object_registry *reg, struct light_object *obj);
 extern void light_object_put_reg(struct light_object_registry *reg, struct light_object *obj);
 
 extern void light_object_init_reg(struct light_object_registry *reg, struct light_object *obj, struct lobj_type *type);
 
-extern int light_object_add_reg(struct light_object_registry *reg, struct light_object *obj, struct light_object *parent,
-                            uint8_t *format, ...);
 
 #endif
