@@ -87,7 +87,7 @@ static int light_object_add_internal(struct light_object_registry *reg, struct l
 {
         struct light_object *parent = light_object_get(obj->parent);
 
-        if(parent->type->evt_child_add)
+        if(parent && parent->type->evt_child_add)
                 parent->type->evt_child_add(parent, obj);
         obj->type->evt_add(obj, parent);
 
