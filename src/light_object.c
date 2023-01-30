@@ -43,10 +43,10 @@ static void _registry_critical_exit(struct light_object_registry *reg)
 void light_object_setup()
 {
         if(!_registry_loaded) {
-                _registry_loaded = true;
 #ifdef RP2040
                 critical_section_init(&_registry_default.mutex);
 #endif
+                _registry_loaded = true;
         }
 }
 static struct light_object_registry *_get_default_registry()
