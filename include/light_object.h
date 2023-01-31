@@ -54,6 +54,11 @@ static inline const uint8_t *light_object_get_name(struct light_object *obj)
         return obj->id;
 }
 
+extern void *light_object_alloc(size_t size);
+extern void *light_object_alloc_reg(struct light_object_registry *reg, size_t size);
+extern void light_object_free(void *obj);
+extern void light_object_free_reg(struct light_object_registry *reg, void *obj);
+
 extern int light_object_add(struct light_object *obj, struct light_object *parent,
                             uint8_t *format, ...);
 extern int light_object_add_reg(struct light_object_registry *reg, struct light_object *obj, struct light_object *parent,

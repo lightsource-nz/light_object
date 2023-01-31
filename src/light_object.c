@@ -21,7 +21,8 @@ struct light_object_registry {
 #ifdef PICO_RP2040
         critical_section_t mutex;
 #endif
-        // TODO add alloc/free function pointers
+        void *(*alloc)(size_t);
+        void (*free)(void *);
 };
 
 static bool _registry_loaded = false;
@@ -46,6 +47,8 @@ void light_object_setup()
 #ifdef RP2040
                 critical_section_init(&_registry_default.mutex);
 #endif
+                _registry_default.alloc = light_alloc;
+                _registry_default.free = light_free;
                 _registry_loaded = true;
         }
 }
@@ -72,6 +75,23 @@ extern void light_object_put(struct light_object *obj)
 extern void light_object_init(struct light_object *obj, struct lobj_type *type)
 {
         light_object_init_reg(_get_default_registry(), obj, type);
+}
+
+extern void *light_object_alloc(size_t size)
+{
+        return light_object_alloc_reg(_get_default_registry(), size);
+}
+extern void *light_object_alloc_reg(struct light_object_registry *reg, size_t size)
+{
+        return reg->alloc(size);
+}
+extern void light_object_free(void *obj)
+{
+        light_object_free_reg(_get_default_registry(), obj);
+}
+extern void light_object_free_reg(struct light_object_registry *reg, void *obj)
+{
+        reg->free(obj);
 }
 
 static uint8_t light_object_set_name_va(struct light_object *obj, const uint8_t *format, va_list vargs)
