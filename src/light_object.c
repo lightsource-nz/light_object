@@ -152,7 +152,11 @@ int light_object_del_reg(struct light_object_registry *reg, struct light_object 
 
 void light_object_init_reg(struct light_object_registry *reg, struct light_object *obj, struct lobj_type *type)
 {
-    obj->ref_count = 1;
+#ifdef PICO_RP2040
+        obj->ref_count = 1;
+#else
+        atomic_store(&obj->ref_count, 1);
+#endif
     obj->type = type;
 }
 // TODO implement saturation conditions and warnings
