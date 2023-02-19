@@ -17,7 +17,7 @@ typedef uint32_t light_ref_t;
 typedef atomic_char32_t light_ref_t;
 #endif
 
-#define LOM_OBJ_NAME_LENGTH 16
+#define LOM_OBJ_NAME_LENGTH 32
 
 struct light_object_registry;
 
