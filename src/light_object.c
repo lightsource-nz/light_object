@@ -72,7 +72,7 @@ extern void light_object_put(struct light_object *obj)
         light_object_put_reg(_get_default_registry(), obj);
 }
 
-extern void light_object_init(struct light_object *obj, struct lobj_type *type)
+extern void light_object_init(struct light_object *obj, const struct lobj_type *type)
 {
         light_object_init_reg(_get_default_registry(), obj, type);
 }
@@ -150,7 +150,7 @@ int light_object_del_reg(struct light_object_registry *reg, struct light_object 
         obj->parent = NULL;
 }
 
-void light_object_init_reg(struct light_object_registry *reg, struct light_object *obj, struct lobj_type *type)
+void light_object_init_reg(struct light_object_registry *reg, struct light_object *obj, const struct lobj_type *type)
 {
 #ifdef PICO_RP2040
         obj->ref_count = 1;

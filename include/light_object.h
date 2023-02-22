@@ -47,7 +47,7 @@ extern struct light_object_registry *light_object_registry_default();
 extern struct light_object *light_object_get(struct light_object *obj);
 extern void light_object_put(struct light_object *obj);
 
-extern void light_object_init(struct light_object *obj, struct lobj_type *type);
+extern void light_object_init(struct light_object *obj, const struct lobj_type *type);
 
 static inline const uint8_t *light_object_get_name(struct light_object *obj)
 {
@@ -69,7 +69,7 @@ extern int light_object_del_reg(struct light_object_registry *reg, struct light_
 extern struct light_object *light_object_get_reg(struct light_object_registry *reg, struct light_object *obj);
 extern void light_object_put_reg(struct light_object_registry *reg, struct light_object *obj);
 
-extern void light_object_init_reg(struct light_object_registry *reg, struct light_object *obj, struct lobj_type *type);
+extern void light_object_init_reg(struct light_object_registry *reg, struct light_object *obj, const struct lobj_type *type);
 
 
 #endif
