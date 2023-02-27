@@ -114,8 +114,8 @@ static int light_object_add_internal(struct light_object_registry *reg, struct l
 
         return LIGHT_OK;
 }
-static int light_object_add_va_reg(struct light_object_registry *reg, struct light_object *obj, struct light_object *parent,
-                               uint8_t *format, va_list vargs)
+int light_object_add_va_reg(struct light_object_registry *reg, struct light_object *obj, struct light_object *parent,
+                               const uint8_t *format, va_list vargs)
 {
         int retval;
 
@@ -129,14 +129,19 @@ static int light_object_add_va_reg(struct light_object_registry *reg, struct lig
         obj->parent = parent;
         return light_object_add_internal(reg, obj);
 }
-extern int light_object_add(struct light_object *obj, struct light_object *parent,
-                            uint8_t *format, ...)
+int light_object_add(struct light_object *obj, struct light_object *parent,
+                            const uint8_t *format, ...)
 {
         va_list vargs;
 
         va_start(vargs, format);
-        return light_object_add_va_reg(_get_default_registry(), obj, parent, format, vargs);
+        return light_object_add_va(obj, parent, format, vargs);
         va_end(vargs);
+}
+int light_object_add_va(struct light_object *obj, struct light_object *parent,
+                            const uint8_t *format, va_list vargs)
+{
+        return light_object_add_va_reg(&_registry_default, obj, parent, format, vargs);
 }
 int light_object_del(struct light_object *obj)
 {
@@ -203,7 +208,7 @@ void light_object_put_reg(struct light_object_registry *reg, struct light_object
 }
 
 int light_object_add_reg(struct light_object_registry *reg, struct light_object *obj, struct light_object *parent,
-                            uint8_t *format, ...)
+                            const uint8_t *format, ...)
 {
         va_list vargs;
         int retval;

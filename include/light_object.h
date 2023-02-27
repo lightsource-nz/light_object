@@ -60,9 +60,13 @@ extern void light_object_free(void *obj);
 extern void light_object_free_reg(struct light_object_registry *reg, void *obj);
 
 extern int light_object_add(struct light_object *obj, struct light_object *parent,
-                            uint8_t *format, ...);
+                                const uint8_t *format, ...);
+extern int light_object_add_va(struct light_object *obj, struct light_object *parent,
+                                const uint8_t *format, va_list vargs);
 extern int light_object_add_reg(struct light_object_registry *reg, struct light_object *obj, struct light_object *parent,
-                            uint8_t *format, ...);
+                                const uint8_t *format, ...);
+extern int light_object_add_va_reg(struct light_object_registry *reg, struct light_object *obj, struct light_object *parent,
+                                const uint8_t *format, va_list vargs);
 extern int light_object_del(struct light_object *obj);
 extern int light_object_del_reg(struct light_object_registry *reg, struct light_object *obj);
 
