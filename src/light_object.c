@@ -200,7 +200,7 @@ void light_object_put_reg(struct light_object_registry *reg, struct light_object
         uint32_t count = obj->ref_count;
         do {
                 if(count > 0)
-                        status = atomic_compare_exchange_strong(&obj->ref_count, &count, count + 1);
+                        status = atomic_compare_exchange_strong(&obj->ref_count, &count, count - 1);
                 else
                         return;
         } while (status);
