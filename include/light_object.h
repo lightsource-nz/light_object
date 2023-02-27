@@ -24,7 +24,7 @@ struct light_object_registry;
 struct light_object {
         light_ref_t ref_count;
         struct light_object *parent;
-        struct lobj_type *type;
+        const struct lobj_type *type;
         uint16_t state_initialized: 1;
         uint16_t is_static: 1;
         uint16_t is_readonly: 1;
