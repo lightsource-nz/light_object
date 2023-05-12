@@ -39,6 +39,19 @@ struct lobj_type {
         void (*evt_child_remove)(struct light_object *obj, struct light_object *child);
 };
 
+#define Light_Object_Full(_id, _parent, _type, _static, _readonly) \
+        (struct light_object) { \
+                .id = _id, \
+                .parent = _parent, \
+                .type = _type, \
+                .is_static = _static, \
+                .is_readonly = _readonly \
+        }
+#define Light_Object(_id, _parent, _type) Light_Object_Full(_id, _parent, _type, 0, 0)
+#define Light_Object_Static(_id, _parent, _type) Light_Object_Full(_id, _parent, _type, 1, 0)
+#define Light_Object_RO(_id, _parent, _type) Light_Object_Full(_id, _parent, _type, 0, 1)
+#define Light_Object_Static_RO(_id, _parent, _type) Light_Object_Full(_id, _parent, _type, 1, 1)
+
 // initialize default object registry, must be called before any light_object API functions
 extern void light_object_setup();
 extern struct light_object_registry *light_object_registry_default();
