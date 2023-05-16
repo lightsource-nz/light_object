@@ -5,7 +5,7 @@
 #include <stdint.h>
 #include <stdbool.h>
 
-#include <light_util.h>
+#include <light_common.h>
 
 // C11 atomics are not supported on Cortex-M0/M0+ CPU cores, so RP2 targets
 // must use hard spinlocks for synchronization
