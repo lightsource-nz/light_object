@@ -6,8 +6,10 @@ target_link_libraries(
         light_object_demo PUBLIC
         light_object
 )
-if(NOT PICO_NO_HARDWARE)
-        pico_enable_stdio_semihosting(light_object_demo 1)
-        target_link_libraries(light_object_demo PUBLIC pico_stdlib)
+if(LIGHT_SYSTEM STREQUAL PICO_SDK)
+        if(NOT PICO_NO_HARDWARE)
+                pico_enable_stdio_semihosting(light_object_demo 1)
+                target_link_libraries(light_object_demo PUBLIC pico_stdlib)
+                pico_add_extra_outputs(light_object_demo)
+        endif()
 endif()
-pico_add_extra_outputs(light_object_demo)

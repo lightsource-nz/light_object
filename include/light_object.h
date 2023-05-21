@@ -7,14 +7,18 @@
 
 #include <light_common.h>
 
+#if(LIGHT_SYSTEM == SYSTEM_PICO_SDK)
+#include <pico/platform.h>
+#if(LIGHT_PLATFORM == PLATFORM_TARGET)
 // C11 atomics are not supported on Cortex-M0/M0+ CPU cores, so RP2 targets
 // must use hard spinlocks for synchronization
-#include <pico/platform.h>
-#ifdef PICO_RP2040
 typedef uint32_t light_ref_t;
 #else
 #include <stdatomic.h>
 typedef atomic_char32_t light_ref_t;
+#endif
+#else
+#define __packed_aligned
 #endif
 
 #define LOM_OBJ_NAME_LENGTH 32

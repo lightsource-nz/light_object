@@ -9,8 +9,8 @@
 
 #include "light_object.h"
 
-#include <pico/platform.h>
-#ifdef PICO_RP2040
+#if(LIGHT_SYSTEM == SYSTEM_PICO_SDK && LIGHT_PLATFORM == PLATFORM_TARGET)
+#define USE_PICO_SPINLOCKS
 #include <pico/critical_section.h>
 #endif
 #include <stdio.h>
@@ -18,7 +18,7 @@
 #include <stdarg.h>
 
 struct light_object_registry {
-#ifdef PICO_RP2040
+#ifdef USE_PICO_SPINLOCKS
         critical_section_t mutex;
 #endif
         void *(*alloc)(size_t);
@@ -30,13 +30,13 @@ static struct light_object_registry _registry_default;
 
 static void _registry_critical_enter(struct light_object_registry *reg)
 {
-#ifdef PICO_RP2040
+#ifdef USE_PICO_SPINLOCKS
         critical_section_enter_blocking(&reg->mutex);
 #endif
 }
 static void _registry_critical_exit(struct light_object_registry *reg)
 {
-#ifdef PICO_RP2040
+#ifdef USE_PICO_SPINLOCKS
         critical_section_exit(&reg->mutex);
 #endif
 }
@@ -44,7 +44,7 @@ static void _registry_critical_exit(struct light_object_registry *reg)
 void light_object_setup()
 {
         if(!_registry_loaded) {
-#ifdef RP2040
+#ifdef USE_PICO_SPINLOCKS
                 critical_section_init(&_registry_default.mutex);
 #endif
                 _registry_default.alloc = light_alloc;
@@ -157,7 +157,7 @@ int light_object_del_reg(struct light_object_registry *reg, struct light_object 
 
 void light_object_init_reg(struct light_object_registry *reg, struct light_object *obj, const struct lobj_type *type)
 {
-#ifdef PICO_RP2040
+#ifdef USE_PICO_SPINLOCKS
         obj->ref_count = 1;
 #else
         atomic_store(&obj->ref_count, 1);
@@ -169,7 +169,7 @@ struct light_object *light_object_get_reg(struct light_object_registry *reg, str
 {
         struct light_object *ref = obj;
         if(obj) {
-#ifdef PICO_RP2040
+#ifdef USE_PICO_SPINLOCKS
                 critical_section_enter_blocking(&reg->mutex);
                 if(obj->ref_count > 0)
                         obj->ref_count++;
@@ -191,7 +191,7 @@ struct light_object *light_object_get_reg(struct light_object_registry *reg, str
 }
 void light_object_put_reg(struct light_object_registry *reg, struct light_object *obj)
 {
-#ifdef PICO_RP2040
+#ifdef USE_PICO_SPINLOCKS
         critical_section_enter_blocking(&_registry_default.mutex);
         obj->ref_count--;
         critical_section_exit(&_registry_default.mutex);
