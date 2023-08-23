@@ -28,5 +28,6 @@ if(LIGHT_SYSTEM STREQUAL PICO_SDK)
                 light_object
                 INTERFACE
                 pico_platform
+                pico_sync
         )
 endif()
