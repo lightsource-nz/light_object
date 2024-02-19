@@ -64,7 +64,10 @@ extern struct light_object_registry *light_object_registry_default();
 extern struct light_object *light_object_get(struct light_object *obj);
 extern void light_object_put(struct light_object *obj);
 
-extern void light_object_init(struct light_object *obj, const struct lobj_type *type);
+void light_object_init(struct light_object *obj, const struct lobj_type *type, const uint8_t *format, ...);
+void light_object_init_va(struct light_object *obj, const struct lobj_type *type, const uint8_t *format, va_list args);
+void light_object_init_reg(struct light_object_registry *reg, struct light_object *obj, const struct lobj_type *type, const uint8_t *format, ...);
+void light_object_init_va_reg(struct light_object_registry *reg, struct light_object *obj, const struct lobj_type *type, const uint8_t *format, va_list args);
 
 static inline const uint8_t *light_object_get_name(struct light_object *obj)
 {
@@ -76,21 +79,13 @@ extern void *light_object_alloc_reg(struct light_object_registry *reg, size_t si
 extern void light_object_free(void *obj);
 extern void light_object_free_reg(struct light_object_registry *reg, void *obj);
 
-extern int light_object_add(struct light_object *obj, struct light_object *parent,
-                                const uint8_t *format, ...);
-extern int light_object_add_va(struct light_object *obj, struct light_object *parent,
-                                const uint8_t *format, va_list vargs);
-extern int light_object_add_reg(struct light_object_registry *reg, struct light_object *obj, struct light_object *parent,
-                                const uint8_t *format, ...);
-extern int light_object_add_va_reg(struct light_object_registry *reg, struct light_object *obj, struct light_object *parent,
-                                const uint8_t *format, va_list vargs);
+extern int light_object_add(struct light_object *obj, struct light_object *parent);
+extern int light_object_add_reg(struct light_object_registry *reg, struct light_object *obj, struct light_object *parent);
 extern int light_object_del(struct light_object *obj);
 extern int light_object_del_reg(struct light_object_registry *reg, struct light_object *obj);
 
 extern struct light_object *light_object_get_reg(struct light_object_registry *reg, struct light_object *obj);
 extern void light_object_put_reg(struct light_object_registry *reg, struct light_object *obj);
-
-extern void light_object_init_reg(struct light_object_registry *reg, struct light_object *obj, const struct lobj_type *type);
 
 
 #endif
