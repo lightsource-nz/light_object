@@ -7,7 +7,7 @@
  * 
  */
 
-#include "light_object.h"
+#include <light_object.h>
 
 #if(LIGHT_SYSTEM == SYSTEM_PICO_SDK && LIGHT_PLATFORM == PLATFORM_TARGET)
 #define USE_PICO_SPINLOCKS
@@ -136,33 +136,21 @@ static uint8_t light_object_set_name_va(struct light_object *obj, const uint8_t 
         vsnprintf(obj->id, LOM_OBJ_NAME_LENGTH, format, vargs);
         return LIGHT_OK;
 }
-static int light_object_add_internal(struct light_object_registry *reg, struct light_object *obj)
+int light_object_add_reg(struct light_object_registry *reg, struct light_object *parent, struct light_object *child)
 {
-        // FIXME this line increments reference count on the parent object, that seems wrong
-        struct light_object *parent = light_object_get(obj->parent);
+        light_trace("parent=%s, child=%s",light_object_get_name(parent), light_object_get_name(child));
+        child->parent = light_object_get(parent);
 
         if(parent && parent->type->evt_child_add)
-                parent->type->evt_child_add(parent, obj);
-        if(obj->type->evt_add)
-                obj->type->evt_add(obj, parent);
+                parent->type->evt_child_add(parent, child);
+        if(child->type->evt_add)
+                child->type->evt_add(child, parent);
 
         return LIGHT_OK;
 }
-int light_object_add_reg(struct light_object_registry *reg, struct light_object *obj, struct light_object *parent)
+int light_object_add(struct light_object *parent, struct light_object *child)
 {
-        int retval;
-
-        if(retval) {
-            light_warn("Could not set name of object at 0x%X: %s\n", obj, light_error_to_string(retval));
-            return retval;
-        }
-
-        obj->parent = parent;
-        return light_object_add_internal(reg, obj);
-}
-int light_object_add(struct light_object *obj, struct light_object *parent)
-{
-        return light_object_add_reg(&_registry_default, obj, parent);
+        return light_object_add_reg(&_registry_default, parent, child);
 }
 int light_object_del(struct light_object *obj)
 {
@@ -204,9 +192,9 @@ struct light_object *light_object_get_reg(struct light_object_registry *reg, str
 void light_object_put_reg(struct light_object_registry *reg, struct light_object *obj)
 {
 #ifdef USE_PICO_SPINLOCKS
-        critical_section_enter_blocking(&_registry_default.mutex);
+        critical_section_enter_blocking(&reg->mutex);
         obj->ref_count--;
-        critical_section_exit(&_registry_default.mutex);
+        critical_section_exit(&reg->mutex);
 #else
         uint8_t status;
         uint32_t count = obj->ref_count;

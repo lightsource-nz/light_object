@@ -79,8 +79,8 @@ extern void *light_object_alloc_reg(struct light_object_registry *reg, size_t si
 extern void light_object_free(void *obj);
 extern void light_object_free_reg(struct light_object_registry *reg, void *obj);
 
-extern int light_object_add(struct light_object *obj, struct light_object *parent);
-extern int light_object_add_reg(struct light_object_registry *reg, struct light_object *obj, struct light_object *parent);
+extern int light_object_add(struct light_object *parent, struct light_object *child);
+extern int light_object_add_reg(struct light_object_registry *reg, struct light_object *parent, struct light_object *child);
 extern int light_object_del(struct light_object *obj);
 extern int light_object_del_reg(struct light_object_registry *reg, struct light_object *obj);
 
